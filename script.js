@@ -10,8 +10,8 @@ const songs = [
     { title: "Salamin, Salamin", artist: "Juan Malalim", genre: "Pop", duration: "4:06", src: "/music/Salamin, Salamin - Juan Malalim.mp3" },
     { title: "Sining", artist: "Juan Malalim", genre: "RnB", duration: "3:21", src: "/music/Sining -  Juan Malalim.mp3" },
     { title: "Randomantic", artist: "Juan Malalim", genre: "RnB", duration: "4:23", src: "/music/song1.mp3" },
-    { title: "Walang Kapalit", artist: "Juan Malalim", genre: "Rock", duration: "3:39", src: "/music/song2.mp3" },
-    { title: "Shy Boi", artist: "Juan Malalim", genre: "Rock", duration: "4:45", src: "/music/song3.mp3" },
+    { title: "Walang Kapalit", artist: "Juan Malalim", genre: "Indie", duration: "3:39", src: "/music/song2.mp3" },
+    { title: "Shy Boi", artist: "Juan Malalim", genre: "Indie", duration: "4:45", src: "/music/song3.mp3" },
     { title: "When I Dream About You", artist: "Juan Malalim", genre: "Rock", duration: "1:42", src: "/music/When I Dream About You.mp3" },
     { title: "YK", artist: "Juan Malalim", genre: "Rock", duration: "2:50", src: "/music/YK - Juan Malalim.mp3" }
 ];
@@ -454,4 +454,5 @@ prevBtn.addEventListener('click', prevSong);
 nextBtn.addEventListener('click', nextSong);
 audio.addEventListener('timeupdate', updateProgress);
 audio.addEventListener('ended', nextSong);
+
 progressContainer.addEventListener('click', setProgress);
