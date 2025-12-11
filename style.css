@@ -1,0 +1,354 @@
+:root {
+    --primary-color: #1db954;
+    --dark-bg: #121212;
+    --panel-bg: #181818;
+    --hover-bg: #282828;
+    --text-color: #ffffff;
+    --nav-width: 240px;
+    --player-height: 100px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--text-color);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* SIDEBAR */
+.sidebar { width: var(--nav-width); background-color: #000; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+.logo { color: var(--primary-color); font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; }
+.nav-links { list-style: none; }
+.nav-links li { padding: 12px 15px; cursor: pointer; color: #b3b3b3; display: flex; align-items: center; gap: 15px; border-radius: 5px; transition: 0.3s; }
+.nav-links li:hover, .nav-links li.active { color: white; background-color: var(--hover-bg); }
+
+/* MAIN CONTENT */
+.main-content { flex: 1; background-color: var(--dark-bg); overflow-y: auto; padding: 30px; padding-bottom: 130px; background: linear-gradient(to bottom, #222, #121212); }
+.section { display: none; animation: fadeIn 0.4s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* HOME SECTION STYLES */
+.hero-card { margin-top: 20px; padding: 30px; background: var(--panel-bg); border-radius: 10px; }
+.hero-card h2 { color: var(--primary-color); margin-bottom: 10px; }
+.hero-card p { color: #ccc; max-width: 600px; line-height: 1.6; }
+.social-links { margin-top: 25px; display: flex; gap: 20px; }
+.social-links a { width: 45px; height: 45px; background: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: 0.3s; font-size: 1.2rem; }
+.social-links a:hover { background: var(--primary-color); transform: translateY(-3px); }
+
+/* PROFILE SECTION STYLES */
+.profile-header { text-align: center; margin-top: 40px; }
+.profile-img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-color); margin-bottom: 20px; }
+.tagline { color: #b3b3b3; margin-bottom: 25px; }
+.stats { display: flex; justify-content: center; gap: 40px; }
+.stats div { display: flex; flex-direction: column; align-items: center; }
+.stats strong { font-size: 1.2rem; }
+.stats span { font-size: 0.9rem; color: #777; }
+
+/* FOLDER SYSTEM STYLES */
+.folders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; margin-top: 20px; }
+.folder-card { background: var(--panel-bg); padding: 20px; border-radius: 10px; text-align: center; cursor: pointer; transition: 0.3s; border: 1px solid transparent; }
+.folder-card:hover { background: var(--hover-bg); transform: translateY(-5px); border-color: #333; }
+.folder-card i { font-size: 3rem; color: #333; margin-bottom: 10px; display: block; }
+.folder-card:hover i { color: var(--primary-color); }
+
+.songs-header { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+.btn-back { background: transparent; border: 1px solid #555; color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+.btn-back:hover { border-color: white; }
+
+/* SONG LIST STYLES */
+.song-item { display: flex; justify-content: space-between; align-items: center; background: var(--panel-bg); padding: 12px 15px; margin-bottom: 8px; border-radius: 5px; cursor: pointer; transition: 0.2s; }
+.song-item:hover { background-color: var(--hover-bg); }
+.song-item.playing { border-left: 4px solid var(--primary-color); background-color: var(--hover-bg); }
+.song-item h4 { font-size: 0.95rem; }
+.song-item small { color: #b3b3b3; }
+.btn-add-queue { background: transparent; border: none; color: #777; cursor: pointer; font-size: 1.1rem; padding: 5px; }
+.btn-add-queue:hover { color: white; }
+
+/* PLAYER & QUEUE */
+.music-player { position: fixed; bottom: 0; left: 0; width: 100%; height: var(--player-height); background-color: #181818; border-top: 1px solid #282828; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; z-index: 100; }
+.track-info { display: flex; align-items: center; width: 25%; }
+.track-art { width: 50px; height: 50px; background: #333; margin-right: 15px; display: flex; justify-content: center; align-items: center; border-radius: 4px; }
+.player-controls { width: 50%; display: flex; flex-direction: column; align-items: center; }
+.buttons { display: flex; gap: 25px; margin-bottom: 8px; align-items: center; }
+.buttons i { font-size: 1.1rem; color: #b3b3b3; cursor: pointer; transition: 0.2s; }
+.buttons i:hover { color: white; }
+.buttons .play-pause { font-size: 2.2rem; color: white; }
+.progress-container { width: 100%; height: 4px; background: #535353; border-radius: 5px; cursor: pointer; position: relative; }
+.progress { height: 100%; background: var(--primary-color); border-radius: 5px; width: 0%; }
+.time-stamps { width: 100%; display: flex; justify-content: space-between; font-size: 0.75rem; color: #b3b3b3; margin-top: 5px; }
+.volume-controls { width: 25%; display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
+.volume-slider { width: 80px; accent-color: var(--primary-color); cursor: pointer; }
+
+/* QUEUE POPUP */
+.queue-popup { position: fixed; bottom: 110px; right: 30px; width: 320px; max-height: 400px; background-color: #181818; border: 1px solid #333; border-radius: 10px; box-shadow: 0 -10px 30px rgba(0,0,0,0.7); padding: 15px; z-index: 99; display: none; overflow-y: auto; }
+.queue-popup.show { display: block; animation: slideUp 0.3s; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.queue-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+.queue-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; font-size: 0.85rem; color: #ccc; }
+.btn-clear-sm { background: #333; color: white; border: none; padding: 3px 10px; border-radius: 10px; font-size: 0.7rem; cursor: pointer; }
+#queue-btn.active { color: var(--primary-color); }
+
+/* Forms */
+input { width: 100%; padding: 12px; margin-bottom: 15px; background: var(--panel-bg); border: 1px solid #333; color: white; border-radius: 5px; }
+.btn-submit { background: var(--primary-color); color: white; border: none; padding: 10px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+
+/* --- ADD TO style.css --- */
+
+.section-title {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    border-left: 4px solid var(--primary-color);
+    padding-left: 10px;
+}
+
+/* UPDATES CARD STYLING */
+.updates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.update-card {
+    background: var(--panel-bg);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 1px solid #333;
+    transition: 0.3s;
+}
+
+.update-card:hover {
+    background: var(--hover-bg);
+    transform: translateY(-2px);
+    border-left: 3px solid var(--primary-color);
+}
+
+.update-date {
+    font-size: 0.75rem;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+    display: block;
+    font-weight: 600;
+}
+
+.update-card h4 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: white;
+}
+
+.update-card p {
+    font-size: 0.85rem;
+    color: #b3b3b3;
+    line-height: 1.4;
+}
+
+/* ACHIEVEMENTS STYLING */
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.achievement-card {
+    background: linear-gradient(145deg, #222, #1a1a1a);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #333;
+    transition: 0.3s;
+}
+
+.achievement-card:hover {
+    border-color: #ffd700; /* Gold color on hover */
+    transform: translateY(-5px);
+}
+
+.achievement-icon {
+    font-size: 2rem;
+    color: #ffd700; /* Gold */
+    margin-bottom: 10px;
+    display: block;
+}
+
+.achievement-card h4 {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.achievement-card small {
+    font-size: 0.7rem;
+    color: #888;
+}
+
+/* Activity Log (List View for Profile) */
+.updates-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* --- Add to style.css --- */
+
+/* New style for the update image */
+.update-img {
+    width: 100%;
+    height: 150px; /* Fixed height for consistency */
+    object-fit: cover; /* Ensures image fills the area without stretching */
+    border-radius: 5px;
+    margin-bottom: 12px;
+    border: 1px solid #333;
+}
+
+/* Adjust existing .update-card slightly */
+.update-card {
+    background: var(--panel-bg);
+    padding: 15px;
+    border-radius: 8px;
+    /* Removed the left border as it looks odd with full-width images */
+    border: 1px solid transparent; 
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.update-card:hover {
+    background: var(--hover-bg);
+    transform: translateY(-2px);
+    border-color: #444; /* Subtle border on hover instead of left-border */
+}
+
+/* --- Add to style.css --- */
+
+.profile-socials {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px; /* Space between socials and stats */
+}
+
+.social-btn {
+    text-decoration: none;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #333; /* Default fallback */
+}
+
+.social-btn:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.2);
+}
+
+/* Specific Brand Colors */
+.social-btn.fb { background-color: #1877F2; } /* Facebook Blue */
+.social-btn.tg { background-color: #0088cc; } /* Telegram Blue */
+.social-btn.ig { 
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); /* Instagram Gradient */
+}
+
+/* --- Add to style.css --- */
+
+/* 1. Centered Achievements */
+.achievements-grid.centered-grid {
+    display: flex;           /* Changed from grid to flex for easier centering */
+    flex-wrap: wrap;         /* Allow wrapping */
+    justify-content: center; /* CENTER content horizontally */
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* 2. Toggle Buttons */
+.view-toggles {
+    background: #222;
+    border-radius: 20px;
+    padding: 3px;
+    display: flex;
+    gap: 5px;
+}
+
+.toggle-btn {
+    background: transparent;
+    border: none;
+    color: #777;
+    width: 35px;
+    height: 30px;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.toggle-btn.active, .toggle-btn:hover {
+    background: var(--panel-bg);
+    color: white;
+}
+
+/* 3. Activity Log Views */
+
+/* Default "Tiles" View (List) */
+.updates-list.tiles-view {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* "Icons Only" View (Grid) */
+.updates-list.icons-view {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center; /* Center the icons */
+}
+
+/* How cards look in Icon Mode */
+.updates-list.icons-view .update-card {
+    width: 80px;
+    height: 80px;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #333;
+}
+
+/* Hide text elements in Icon Mode */
+.updates-list.icons-view .update-card h4,
+.updates-list.icons-view .update-card p,
+.updates-list.icons-view .update-card .update-date,
+.updates-list.icons-view .update-card img {
+    display: none; 
+}
+
+/* Show the Icon in Icon Mode */
+.updates-list.icons-view .update-card .update-icon-display {
+    display: block !important; /* Force show */
+    font-size: 1.8rem;
+    color: var(--primary-color);
+}
+
+/* Tooltip for Icon Mode (Optional: shows title on hover) */
+.updates-list.icons-view .update-card:hover::after {
+    content: attr(data-title); /* Uses data attribute from JS */
+    position: absolute;
+    bottom: -30px;
+    background: #000;
+    color: white;
+    font-size: 0.7rem;
+    padding: 5px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 10;
+}
