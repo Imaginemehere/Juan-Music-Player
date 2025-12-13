@@ -16,443 +16,414 @@ const songs = [
     { title: "YK", artist: "Juan Malalim", genre: "Rock", duration: "2:50", src: "/music/YK - Juan Malalim.mp3" }
 ];
 
-// UPDATES DATA (Home & Profile)
 const updates = [
-    { 
-        date: "Dec 10, 2025", 
-        title: "New Song Drop", 
-        message: "Check out the hottest drops of the week.",
-        image: "https://picsum.photos/id/10/400/200",
-        icon: "fa-compact-disc" // <--- NEW ICON
-    },
-    { 
-        date: "Dec 05, 2025", 
-        title: "Website Launch", 
-        message: "Welcome to OneMusic V1.0!", 
-        icon: "fa-rocket"       // <--- NEW ICON
-    },
-    { 
-        date: "Nov 28, 2025", 
-        title: "Studio Vibes", 
-        message: "Behind the scenes look.",
-        image: "https://picsum.photos/id/453/400/200",
-        icon: "fa-microphone"   // <--- NEW ICON
-    }
+    { date: "Dec 12", title: "Winter Collection", message: "Chill vibes for cold nights.", image: "https://cdn.pixabay.com/photo/2019/12/18/04/11/dj-4702977_1280.jpg", icon: "fa-snowflake" },
+    { date: "Dec 10", title: "New Album Drop", message: "Check the library.", icon: "fa-compact-disc" }
 ];
-
-// ACHIEVEMENTS DATA (Profile)
 const achievements = [
-    { icon: "fa-trophy", title: "Top Curator", desc: "Created 50+ Playlists" },
-    { icon: "fa-headphones", title: "Audiophile", desc: "1,000 Hours Streamed" },
-    { icon: "fa-star", title: "Vibe Master", desc: "Joined 2 Years Ago" },
-    { icon: "fa-music", title: "Collector", desc: "100+ Songs Saved" }
+    { icon: "fa-trophy", title: "Pro", desc: "50 Playlists" },
+    { icon: "fa-headphones", title: "Audiophile", desc: "1k Hours" }
 ];
 
-/* =========================================
-   2. DOM ELEMENTS & STATE
-   ========================================= */
-
-const audio = document.getElementById('audio-source');
-const playBtn = document.getElementById('play-btn');
-const prevBtn = document.getElementById('prev-btn');
-const nextBtn = document.getElementById('next-btn');
-const titleLabel = document.getElementById('current-title');
-const artistLabel = document.getElementById('current-artist');
-const progressContainer = document.getElementById('progress-container');
-const progress = document.getElementById('progress');
-const currTimeLabel = document.getElementById('current-time');
-const durationLabel = document.getElementById('duration');
-
-// View Containers
-const foldersContainer = document.getElementById('folders-container');
-const playlistContainer = document.getElementById('playlist-container');
-const genreView = document.getElementById('genre-view');
-const songsView = document.getElementById('songs-view');
-const selectedGenreTitle = document.getElementById('selected-genre-title');
-
-// Queue Elements
+// --- DOM ---
+const deckA = document.getElementById('audio-deck-a');
+const deckB = document.getElementById('audio-deck-b');
+const playWrapper = document.getElementById('play-btn');
+const playIcon = playWrapper.querySelector('i');
+const vinylImg = document.getElementById('vinyl-spin');
+const titleLbl = document.getElementById('current-title');
+const artistLbl = document.getElementById('current-artist');
+const progressBg = document.getElementById('progress-container');
+const progressFill = document.getElementById('progress');
+const currTime = document.getElementById('current-time');
+const durTime = document.getElementById('duration');
+const likeBtn = document.getElementById('player-like-btn');
 const queuePopup = document.getElementById('queue-popup');
 const queueListContent = document.getElementById('queue-list-content');
 const queueBtn = document.getElementById('queue-btn');
-
-// Form Elements
 const suggestForm = document.getElementById('suggest-form');
 const formStatus = document.getElementById('form-status');
+const volSlider = document.querySelector('.vol-slider');
 
-// State Variables
-let currentPlaylist = []; 
-let songIndex = 0;
+// --- STATE ---
 let isPlaying = false;
-let queue = []; 
+let isShuffle = false;
+let repeatState = 'none'; 
+let currentPlaylist = [];
+let originalPlaylist = [];
+let songIndex = 0;
+let queue = [];
+let likedSongs = JSON.parse(localStorage.getItem('liked')) || [];
+let userVolume = 1.0; 
+let isFading = false;
+let activeDeck = deckA; 
+let inactiveDeck = deckB;
+let crossfadeTriggered = false; 
 
-/* =========================================
-   3. INITIALIZATION
-   ========================================= */
-
+// --- INIT ---
 init();
-
 function init() {
-    renderFolders();
-    renderUpdates();
-    renderAchievements();
+    renderFolders(); renderUpdates(); renderAchievements();
+    originalPlaylist = [...songs];
+    currentPlaylist = [...songs];
     
-    // Default to All songs initially
-    currentPlaylist = songs; 
-    loadSong(currentPlaylist[0]);
+    // Init Deck A
+    activeDeck.src = songs[0].src;
+    activeDeck.load();
+    updateTrackInfo(songs[0]);
+    activeDeck.volume = userVolume;
 }
 
-/* =========================================
-   4. RENDER FUNCTIONS
-   ========================================= */
-
-// Folders
-function renderFolders() {
-    if(!foldersContainer) return;
-    foldersContainer.innerHTML = "";
-    
-    const genres = [...new Set(songs.map(song => song.genre))];
-
-    createFolderElement("All Songs", "All");
-    genres.forEach(genre => {
-        createFolderElement(genre, genre);
-    });
-}
-
-function createFolderElement(displayName, filterKey) {
-    const div = document.createElement('div');
-    div.classList.add('folder-card');
-    div.innerHTML = `
-        <i class="fas fa-folder"></i>
-        <h3>${displayName}</h3>
-        <small>${songs.filter(s => filterKey === 'All' ? true : s.genre === filterKey).length} Songs</small>
-    `;
-    div.onclick = () => openFolder(filterKey);
-    foldersContainer.appendChild(div);
-}
-
-// Open Folder Logic
-function openFolder(genre) {
-    if (genre === 'All') {
-        currentPlaylist = songs;
-        selectedGenreTitle.innerText = "All Songs";
-    } else {
-        currentPlaylist = songs.filter(s => s.genre === genre);
-        selectedGenreTitle.innerText = genre + " Music";
-    }
-
-    renderSongList();
-    genreView.style.display = 'none';
-    songsView.style.display = 'block';
-}
-
-function backToFolders() {
-    songsView.style.display = 'none';
-    genreView.style.display = 'block';
-}
-
-// Render Songs inside Folder
-function renderSongList() {
-    playlistContainer.innerHTML = "";
-    currentPlaylist.forEach((song, index) => {
-        const div = document.createElement('div');
-        div.classList.add('song-item');
-        
-        // Highlight active song
-        if(song.title === titleLabel.innerText && queue.length === 0) {
-            div.classList.add('playing');
-        }
-
-        div.innerHTML = `
-            <div style="flex:1" onclick="playFromList(${index})">
-                <h4>${song.title}</h4>
-                <small>${song.artist}</small>
-            </div>
-            <div style="display:flex; gap:15px; align-items:center;">
-                <span style="font-size:0.8rem; color:#777;">${song.duration}</span>
-                <button class="btn-add-queue" onclick="addToQueue('${song.title}')" title="Add to Queue">
-                    <i class="fas fa-plus-circle"></i>
-                </button>
-            </div>
-        `;
-        playlistContainer.appendChild(div);
-    });
-}
-
-// Render Updates
-function renderUpdates() {
-    const homeContainer = document.getElementById('home-updates-container');
-    const profileContainer = document.getElementById('profile-updates-container');
-    
-    if(homeContainer) homeContainer.innerHTML = "";
-    if(profileContainer) profileContainer.innerHTML = "";
-
-    updates.forEach(update => {
-        const imgHtml = update.image ? `<img src="${update.image}" alt="${update.title}" class="update-img">` : '';
-        
-        // We add 'data-title' for the tooltip in Icon View
-        const html = `
-            <div class="update-card" data-title="${update.title} - ${update.date}">
-                <i class="fas ${update.icon || 'fa-bell'} update-icon-display" style="display:none;"></i>
-                
-                ${imgHtml}
-                <span class="update-date">${update.date}</span>
-                <h4>${update.title}</h4>
-                <p>${update.message}</p>
-            </div>
-        `;
-        if(homeContainer) homeContainer.innerHTML += html;
-        if(profileContainer) profileContainer.innerHTML += html;
-    });
-}
-
-// 3. TOGGLE FUNCTION
-function setActivityView(viewType) {
-    const container = document.getElementById('profile-updates-container');
-    const btnTiles = document.getElementById('btn-view-tiles');
-    const btnIcons = document.getElementById('btn-view-icons');
-
-    if (viewType === 'icons') {
-        container.classList.remove('tiles-view');
-        container.classList.add('icons-view');
-        
-        btnTiles.classList.remove('active');
-        btnIcons.classList.add('active');
-    } else {
-        container.classList.remove('icons-view');
-        container.classList.add('tiles-view');
-        
-        btnIcons.classList.remove('active');
-        btnTiles.classList.add('active');
-    }
-}
-
-// Render Achievements
-function renderAchievements() {
-    const container = document.getElementById('achievements-container');
-    if(!container) return;
-    container.innerHTML = "";
-    
-    achievements.forEach(item => {
-        const div = document.createElement('div');
-        div.classList.add('achievement-card');
-        div.innerHTML = `
-            <i class="fas ${item.icon} achievement-icon"></i>
-            <h4>${item.title}</h4>
-            <small>${item.desc}</small>
-        `;
-        container.appendChild(div);
-    });
-}
-
-/* =========================================
-   5. PLAYER LOGIC
-   ========================================= */
-
-function loadSong(song) {
-    titleLabel.innerText = song.title;
-    artistLabel.innerText = song.artist;
-    audio.src = song.src;
-}
-
-function playFromList(index) {
-    songIndex = index;
-    loadSong(currentPlaylist[songIndex]);
-    playSong();
-    renderSongList();
+// --- DUAL DECK ENGINE ---
+function updateTrackInfo(s) {
+    titleLbl.innerText = s.title;
+    artistLbl.innerText = s.artist;
+    updateLikeBtn();
 }
 
 function playSong() {
+    if(isFading) return; 
     isPlaying = true;
-    audio.play();
-    playBtn.classList.remove('fa-play-circle');
-    playBtn.classList.add('fa-pause-circle');
+    activeDeck.play();
+    updateUI(true);
 }
 
 function pauseSong() {
+    if(isFading) return;
     isPlaying = false;
-    audio.pause();
-    playBtn.classList.remove('fa-pause-circle');
-    playBtn.classList.add('fa-play-circle');
+    activeDeck.pause();
+    updateUI(false);
 }
 
-function togglePlay() {
-    if (isPlaying) pauseSong();
-    else playSong();
-}
-
-function nextSong() {
-    // 1. Check Queue First
-    if (queue.length > 0) {
-        const nextTrack = queue.shift();
-        loadSong(nextTrack);
-        playSong();
-        renderQueue(); 
+function updateUI(play) {
+    if(play) {
+        playWrapper.classList.add('playing');
+        playIcon.className = "fas fa-pause";
+        vinylImg.classList.add('spinning');
     } else {
-        // 2. Normal Playlist Flow
+        playWrapper.classList.remove('playing');
+        playIcon.className = "fas fa-play";
+        vinylImg.classList.remove('spinning');
+    }
+}
+
+playWrapper.onclick = () => isPlaying ? pauseSong() : playSong();
+document.getElementById('next-btn').onclick = () => nextSong(true);
+document.getElementById('prev-btn').onclick = prevSong;
+
+/* --- SEAMLESS FADE (AUTO) --- */
+async function transitionToSong(songObj) {
+    if(isFading) return;
+    isFading = true;
+    crossfadeTriggered = true;
+    
+    inactiveDeck.src = songObj.src;
+    inactiveDeck.load();
+    updateTrackInfo(songObj);
+    updateUI(true); 
+
+    inactiveDeck.volume = 0;
+    inactiveDeck.play();
+
+    const fadeDur = 8000; 
+    const steps = 80;
+    const interval = fadeDur / steps;
+    const volStep = userVolume / steps;
+
+    for (let i = 0; i <= steps; i++) {
+        if(!isFading) break; // Abort if manual interruption
+        activeDeck.volume = Math.max(0, userVolume - (i * volStep));
+        inactiveDeck.volume = Math.min(userVolume, i * volStep);
+        await new Promise(r => setTimeout(r, interval));
+    }
+
+    if(isFading) {
+        activeDeck.pause();
+        activeDeck.currentTime = 0;
+        activeDeck.volume = userVolume; 
+        
+        let temp = activeDeck;
+        activeDeck = inactiveDeck;
+        inactiveDeck = temp;
+        
+        isFading = false;
+        crossfadeTriggered = false;
+        isPlaying = true;
+        setupProgressEvents(); 
+    }
+}
+
+/* --- HARD CUT (MANUAL) --- */
+function loadDeckInstant(s) {
+    isFading = false;
+    crossfadeTriggered = false;
+    
+    inactiveDeck.pause();
+    inactiveDeck.currentTime = 0;
+    inactiveDeck.volume = userVolume; 
+
+    activeDeck.src = s.src;
+    activeDeck.load();
+    activeDeck.volume = userVolume;
+    updateTrackInfo(s);
+    
+    playSong(); 
+    setupProgressEvents(); 
+}
+
+function nextSong(manual = false) {
+    let nextTrack;
+    
+    // 1. QUEUE Logic
+    if(queue.length > 0) { 
+        nextTrack = queue.shift(); 
+        renderQueue(); 
+    } 
+    // 2. REPEAT ONE (Auto Only)
+    else if(repeatState === 'one' && !manual) {
+        activeDeck.currentTime = 0; 
+        activeDeck.play(); 
+        return;
+    }
+    // 3. PLAYLIST Logic
+    else {
         songIndex++;
         if (songIndex > currentPlaylist.length - 1) {
-            songIndex = 0; 
+            if(repeatState === 'none' && !manual) { 
+                songIndex = currentPlaylist.length - 1; 
+                pauseSong(); 
+                return; 
+            } else { 
+                songIndex = 0; 
+            }
         }
-        loadSong(currentPlaylist[songIndex]);
-        playSong();
-        renderSongList();
+        nextTrack = currentPlaylist[songIndex];
     }
+    
+    if(manual) loadDeckInstant(nextTrack);
+    else transitionToSong(nextTrack);
+    
+    renderSongList();
 }
 
 function prevSong() {
     songIndex--;
-    if (songIndex < 0) {
-        songIndex = currentPlaylist.length - 1;
-    }
-    loadSong(currentPlaylist[songIndex]);
-    playSong();
+    if (songIndex < 0) songIndex = currentPlaylist.length - 1;
+    loadDeckInstant(currentPlaylist[songIndex]);
     renderSongList();
 }
 
-/* =========================================
-   6. QUEUE LOGIC
-   ========================================= */
+// --- PROGRESS & AUTO-TRIGGER ---
+function setupProgressEvents() {
+    deckA.ontimeupdate = null; deckB.ontimeupdate = null;
+    deckA.onended = null; deckB.onended = null;
 
-function addToQueue(songTitle) {
-    const songObj = songs.find(s => s.title === songTitle);
-    if(songObj) {
-        queue.push(songObj);
-        renderQueue();
-        
-        // Visual feedback
-        if(!queuePopup.classList.contains('show')) {
-            queueBtn.style.color = "#1db954";
-            setTimeout(() => queueBtn.style.color = "#b3b3b3", 500);
+    activeDeck.ontimeupdate = (e) => {
+        const dur = e.srcElement.duration;
+        const cur = e.srcElement.currentTime;
+        if(!dur) return;
+
+        const pct = (cur / dur) * 100;
+        progressFill.style.width = pct + "%";
+        currTime.innerText = fmt(cur);
+        durTime.innerText = fmt(dur);
+
+        // AUTO-CROSSFADE (10s before end)
+        const timeLeft = dur - cur;
+        if (timeLeft <= 10 && !isFading && !crossfadeTriggered && isPlaying && repeatState !== 'one') {
+            nextSong(false); 
         }
-    }
-}
-
-function renderQueue() {
-    queueListContent.innerHTML = "";
-    if(queue.length === 0) {
-        queueListContent.innerHTML = '<p style="color:#666; font-size:0.8rem; text-align:center;">Queue is empty.</p>';
-        queueBtn.classList.remove('active');
-    } else {
-        queueBtn.classList.add('active');
-        queue.forEach((song, i) => {
-            const div = document.createElement('div');
-            div.classList.add('queue-item');
-            div.innerHTML = `
-                <div>
-                    <span style="color:white; font-size:0.9rem;">${song.title}</span><br>
-                    <span style="color:#777; font-size:0.7rem;">${song.artist}</span>
-                </div>
-                <button class="btn-clear-sm" onclick="removeFromQueue(${i})"><i class="fas fa-times"></i></button>
-            `;
-            queueListContent.appendChild(div);
-        });
-    }
-}
-
-function removeFromQueue(index) {
-    queue.splice(index, 1);
-    renderQueue();
-}
-
-function clearQueue() {
-    queue = [];
-    renderQueue();
-}
-
-function toggleQueuePopup() {
-    queuePopup.classList.toggle('show');
-}
-
-/* =========================================
-   7. PROGRESS & VOLUME
-   ========================================= */
-
-function updateProgress(e) {
-    const { duration, currentTime } = e.srcElement;
-    if(isNaN(duration)) return;
-    const progressPercent = (currentTime / duration) * 100;
-    progress.style.width = `${progressPercent}%`;
-    
-    const formatTime = (time) => {
-        const min = Math.floor(time / 60);
-        const sec = Math.floor(time % 60);
-        return `${min}:${sec < 10 ? '0' + sec : sec}`;
     };
+    
+    // Fallback if song ends without trigger
+    activeDeck.onended = () => {
+        if(!crossfadeTriggered && repeatState !== 'one') nextSong(false);
+        else if (repeatState === 'one') { activeDeck.currentTime = 0; activeDeck.play(); }
+    };
+}
+setupProgressEvents(); 
 
-    durationLabel.innerText = formatTime(duration);
-    currTimeLabel.innerText = formatTime(currentTime);
+progressBg.onclick = (e) => activeDeck.currentTime = (e.offsetX / progressBg.clientWidth) * activeDeck.duration;
+const fmt = t => { const m=Math.floor(t/60), s=Math.floor(t%60); return `${m}:${s<10?'0'+s:s}`; };
+
+function setVolume(val) {
+    userVolume = val / 100;
+    if(!isFading) activeDeck.volume = userVolume;
 }
 
-function setProgress(e) {
-    const width = this.clientWidth;
-    const clickX = e.offsetX;
-    const duration = audio.duration;
-    audio.currentTime = (clickX / width) * duration;
+// --- SHUFFLE & REPEAT (FIXED) ---
+
+// Helper to shuffle any array
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
 }
 
-function setVolume(value) {
-    audio.volume = value / 100;
-}
-
-/* =========================================
-   8. NAVIGATION & FORM
-   ========================================= */
-
-function showSection(sectionId, element) {
-    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-    document.getElementById(sectionId).classList.add('active');
-    document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
-    element.classList.add('active');
-}
-
-// FORM HANDLING (AJAX)
-if(suggestForm) {
-    suggestForm.addEventListener('submit', async function(event) {
-        event.preventDefault(); 
+function toggleShuffle() {
+    isShuffle = !isShuffle;
+    const btn = document.getElementById('shuffle-btn');
+    const curTitle = titleLbl.innerText;
+    
+    if (isShuffle) {
+        btn.classList.add('active');
         
-        const formData = new FormData(suggestForm);
-        const submitBtn = suggestForm.querySelector('button');
-        const originalBtnText = submitBtn.innerText;
-
-        submitBtn.innerText = "Sending...";
-        submitBtn.disabled = true;
-
-        try {
-            const response = await fetch(suggestForm.action, {
-                method: suggestForm.method,
-                body: formData,
-                headers: { 'Accept': 'application/json' }
-            });
-
-            if (response.ok) {
-                suggestForm.style.display = "none";
-                formStatus.style.display = "block";
-                suggestForm.reset();
-            } else {
-                alert("Oops! There was a problem sending your form.");
-            }
-        } catch (error) {
-            alert("Oops! There was a problem sending your form.");
-        } finally {
-            submitBtn.innerText = originalBtnText;
-            submitBtn.disabled = false;
+        // 1. Shuffle Main Playlist
+        shuffleArray(currentPlaylist);
+        
+        // 2. Shuffle Queue (The Fix!)
+        if(queue.length > 0) {
+            shuffleArray(queue);
+            renderQueue(); // Update UI immediately
         }
+        
+    } else {
+        btn.classList.remove('active');
+        // Restore playlist order
+        currentPlaylist = [...originalPlaylist];
+        // Note: We usually don't un-shuffle the user queue as that's confusing
+    }
+    
+    // Re-sync index
+    songIndex = currentPlaylist.findIndex(s => s.title === curTitle);
+    if(document.getElementById('songs-view').style.display==='block') renderSongList();
+}
+
+function toggleRepeat() {
+    const btn = document.getElementById('repeat-btn');
+    if(repeatState === 'none') { repeatState='all'; btn.className="fas fa-redo active"; }
+    else if(repeatState === 'all') { repeatState='one'; btn.className="fas fa-redo active repeat-one"; }
+    else { repeatState='none'; btn.className="fas fa-redo"; }
+}
+
+function playFromList(i) {
+    songIndex = i;
+    loadDeckInstant(currentPlaylist[songIndex]);
+}
+
+// --- FOLDERS & LIBRARY ---
+function renderFolders() {
+    const c = document.getElementById('folders-container'); c.innerHTML = "";
+    const liked = document.createElement('div'); liked.className='folder-card'; liked.style.borderColor='#ff007f';
+    liked.innerHTML=`<i class="fas fa-heart" style="color:#ff007f"></i><h3>Liked</h3><small>${likedSongs.length} Songs</small>`;
+    liked.onclick=()=>openFolder('Liked'); c.appendChild(liked);
+
+    const all = document.createElement('div'); all.className='folder-card';
+    all.innerHTML=`<i class="fas fa-music"></i><h3>All Songs</h3><small>${songs.length} Songs</small>`;
+    all.onclick=()=>openFolder('All'); c.appendChild(all);
+
+    [...new Set(songs.map(s=>s.genre))].forEach(g => {
+        const d = document.createElement('div'); d.className='folder-card'; 
+        d.innerHTML=`<i class="fas fa-folder"></i><h3>${g}</h3><small>${songs.filter(s=>s.genre===g).length}</small>`;
+        d.onclick=()=>openFolder(g); c.appendChild(d);
     });
 }
+function openFolder(f) {
+    if(f==='Liked') currentPlaylist = songs.filter(s=>likedSongs.includes(s.title));
+    else if(f==='All') currentPlaylist = [...songs];
+    else currentPlaylist = songs.filter(s=>s.genre===f);
+    
+    if(isShuffle) shuffleArray(currentPlaylist);
 
-function resetForm() {
-    formStatus.style.display = "none";
-    suggestForm.style.display = "block";
+    document.getElementById('genre-view').style.display='none';
+    document.getElementById('songs-view').style.display='block';
+    document.getElementById('selected-genre-title').innerText = f==='All'?'All Songs':f;
+    renderSongList();
+}
+function backToFolders() {
+    document.getElementById('songs-view').style.display='none';
+    document.getElementById('genre-view').style.display='block';
+    renderFolders();
+}
+function renderSongList() {
+    const c = document.getElementById('playlist-container'); c.innerHTML = "";
+    if(currentPlaylist.length===0) c.innerHTML = "<p style='color:#777; text-align:center;'>No songs found.</p>";
+    currentPlaylist.forEach((s,i) => {
+        const d = document.createElement('div'); d.className = "song-item" + (s.title===titleLbl.innerText ? " playing":"");
+        const heartClass = likedSongs.includes(s.title) ? "fas fa-heart reaction-btn liked" : "far fa-heart reaction-btn";
+        d.innerHTML = `
+            <div style="flex:1" onclick="playFromList(${i})"><h4>${s.title}</h4><small>${s.artist}</small></div>
+            <div style="display:flex; gap:15px; align-items:center;">
+                <i class="${heartClass}" onclick="toggleLike('${s.title}')"></i>
+                <span style="font-size:0.8rem;color:#777;">${s.duration}</span>
+                <button class="btn-add-queue" onclick="addToQueue('${s.title}')"><i class="fas fa-plus-circle"></i></button>
+            </div>`;
+        c.appendChild(d);
+    });
+}
+function toggleLikeCurrent() {
+    const t = titleLbl.innerText;
+    likedSongs.includes(t) ? likedSongs=likedSongs.filter(x=>x!==t) : likedSongs.push(t);
+    localStorage.setItem('liked', JSON.stringify(likedSongs));
+    updateLikeBtn(); renderFolders(); 
+    if(document.getElementById('songs-view').style.display === 'block') renderSongList();
+}
+function updateLikeBtn() {
+    likeBtn.className = likedSongs.includes(titleLbl.innerText) ? "fas fa-heart reaction-btn liked" : "far fa-heart reaction-btn";
+}
+function toggleLike(t) {
+    likedSongs.includes(t) ? likedSongs=likedSongs.filter(x=>x!==t) : likedSongs.push(t);
+    localStorage.setItem('liked', JSON.stringify(likedSongs));
+    renderSongList(); updateLikeBtn(); renderFolders();
 }
 
-/* =========================================
-   9. EVENT LISTENERS
-   ========================================= */
+// --- QUEUE ---
+function addToQueue(t) { 
+    const s = songs.find(x => x.title === t); 
+    if(s) { queue.push(s); renderQueue(); if(!queuePopup.classList.contains('show')) queueBtn.style.color="#ff007f"; }
+}
+function renderQueue() { 
+    const c = document.getElementById('queue-list-content'); c.innerHTML=""; 
+    queue.forEach((s,i)=>c.innerHTML+=`<div class="queue-item"><div>${s.title}</div><button class="btn-clear-sm" onclick="removeFromQueue(${i})">x</button></div>`); 
+    queueBtn.classList.toggle('active', queue.length > 0);
+}
+function removeFromQueue(i) { queue.splice(i, 1); renderQueue(); }
+function clearQueue() { queue=[]; renderQueue(); }
+function toggleQueuePopup() { queuePopup.classList.toggle('show'); }
 
-playBtn.addEventListener('click', togglePlay);
-prevBtn.addEventListener('click', prevSong);
-nextBtn.addEventListener('click', nextSong);
-audio.addEventListener('timeupdate', updateProgress);
-audio.addEventListener('ended', nextSong);
+// --- UI HELPERS ---
+function renderUpdates() {
+    const homeC = document.getElementById('home-updates-container');
+    const profC = document.getElementById('profile-updates-container');
+    if(homeC) homeC.innerHTML = updates.map(u=>`<div class="update-card"><img src="${u.image||''}" class="update-img" style="${!u.image?'display:none':''}"><h4>${u.title}</h4><p>${u.message}</p></div>`).join('');
+    if(profC) profC.innerHTML = updates.map(u=>`<div class="update-card" data-title="${u.title}"><i class="fas ${u.icon} update-icon-display" style="display:none"></i><img src="${u.image||''}" class="update-img" style="${!u.image?'display:none':''}"><h4>${u.title}</h4><p>${u.message}</p></div>`).join('');
+}
+function renderAchievements() {
+    document.getElementById('achievements-container').innerHTML = achievements.map(a=>`<div class="achievement-card"><i class="fas ${a.icon} achievement-icon"></i><h4>${a.title}</h4></div>`).join('');
+}
+function setActivityView(t) {
+    const c = document.getElementById('profile-updates-container');
+    c.className = t==='icons'?'updates-list icons-view':'updates-list tiles-view';
+    document.getElementById('btn-view-tiles').classList.toggle('active', t==='tiles');
+    document.getElementById('btn-view-icons').classList.toggle('active', t==='icons');
+}
+function showSection(id, el) {
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav-links li').forEach(l=>l.classList.remove('active'));
+    el.classList.add('active');
+}
 
-progressContainer.addEventListener('click', setProgress);
+document.addEventListener('keydown', (e) => {
+    if (['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+    switch (e.code) {
+        case 'Space': e.preventDefault(); isPlaying ? pauseSong() : playSong(); break;
+        case 'ArrowRight': case 'KeyN': nextSong(true); break;
+        case 'ArrowLeft': case 'KeyP': prevSong(); break;
+        case 'KeyL': toggleLikeCurrent(); break;
+        case 'ArrowUp': e.preventDefault(); setVolume(Math.min((userVolume*100)+10, 100)); volSlider.value = userVolume*100; break;
+        case 'ArrowDown': e.preventDefault(); setVolume(Math.max((userVolume*100)-10, 0)); volSlider.value = userVolume*100; break;
+    }
+});
+
+if(suggestForm) {
+    suggestForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = suggestForm.querySelector('button'); btn.innerText = "Sending...";
+        try { await fetch(suggestForm.action, { method:'POST', body:new FormData(suggestForm), headers:{'Accept':'application/json'} }); suggestForm.style.display='none'; formStatus.style.display='block'; }
+        catch { alert("Error sending."); }
+        btn.innerText = "Submit Suggestion";
+    };
+}
+function resetForm() { formStatus.style.display='none'; suggestForm.style.display='block'; suggestForm.reset(); }

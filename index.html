@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juan Malalim | Covers</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Juan | Covers</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon-16x16.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="logo"><i class="fas fa-music"></i> Juan Covers</div>
+        <div class="logo">
+            <i class="fas fa-wave-square"></i> OneStream
+        </div>
         <ul class="nav-links">
             <li class="active" onclick="showSection('home', this)"><i class="fas fa-home"></i> Home</li>
             <li onclick="showSection('profile', this)"><i class="fas fa-user"></i> Profile</li>
-            <li onclick="showSection('playlist', this)"><i class="fas fa-folder"></i> Library</li>
+            <li onclick="showSection('playlist', this)"><i class="fas fa-folder-open"></i> Library</li>
             <li onclick="showSection('suggest', this)"><i class="fas fa-lightbulb"></i> Suggest</li>
         </ul>
     </nav>
@@ -23,106 +26,92 @@
     <main class="main-content">
         
         <div id="home" class="section active">
-    <h1>Welcome</h1>
-    <div class="hero-card">
-        <h2>OneMusic Music</h2>
-        <p>Welcome to my personal music space. Here you can find my curated playlists, specialized genres, and my personal favorites.</p>
-        
-        <div class="social-links">
-            <a href="https://www.instagram.com/akosijuanmala/" target="_blank"><i class="fab fa-instagram"></i></a>
-            <a href="https://t.me/JuanMOnle" target="_blank"><i class="fab fa-telegram-plane"></i></a>
-            <a href="https://jcdrodriguez.netlify.app" target="_blank"><i class="fas fa-globe"></i></a>
-        </div>
-    </div>
-<!--
-    <h3 class="section-title">Latest Updates</h3>
-    <div id="home-updates-container" class="updates-grid">
-        </div> -->
-</div>
-
-<div id="profile" class="section">
-    <div class="profile-header">
-        <img src="./images/Profile/profile-img.jpg" alt="Profile Photo" class="profile-img">
-        <h1>Juan Malalim</h1>
-        <p class="tagline">Sound Engineer, Web Developer, UX/ UI Designer &amp; Photographer.</p>
-        
-        <div class="profile-socials">
-            <a href="https://t.me/JuanMOnle" target="_blank" class="social-btn tg"><i class="fab fa-telegram-plane"></i> Telegram</a>
-            <a href="https://www.instagram.com/akosijuanmala/" target="_blank" class="social-btn ig"><i class="fab fa-instagram"></i> Instagram</a>
-            <a href="https://jcdrodriguez.netlify.app" target="_blank" class="social-btn fb"><i class="fas fa-globe"></i> Website</a>
+            <div class="hero-card polished-hero">
+                <div class="hero-content">
+                    <span class="hero-badge">Featured</span>
+                    <h1>Juan Malalim</h1>
+                    <p>Immerse yourself in a curated audio experience. Discover new frequencies in a floating, glass-morphic environment.</p>
+                    <div class="hero-actions">
+                        <button class="btn-play-hero" onclick="playSong()"><i class="fas fa-play"></i> Play Now</button>
+                        <div class="social-links">
+                            
+                            <a href="#"><i class="fab fa-telegram"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fa-solid fa-globe"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-header">
+                <h3>Latest Drops</h3>
+                <span class="see-all" onclick="showSection('playlist', this)">View All</span>
+            </div>
+            <div id="home-updates-container" class="updates-grid"></div>
         </div>
 
-        <div class="stats">
-            <div><strong>120</strong> <span>Playlists</span></div>
-            <div><strong>1.5k</strong> <span>Followers</span></div>
-            <div><strong>850</strong> <span>Following</span></div>
+        <div id="profile" class="section">
+            <div class="profile-dashboard">
+                <div class="profile-avatar-wrapper">
+                    <img src="/images/Profile/profile-img.jpg" alt="Profile" class="profile-img">
+                    <div class="online-indicator"></div>
+                </div>
+                <h1 class="profile-name">Juan Malalim <i class="fas fa-check-circle verified-badge"></i></h1>
+                <p class="profile-tag">Sound Engineer, Web Developer, UX/ UI Designer &amp; Photographer.</p>
+                <div class="stats-bar">
+                    <div class="stat-item"><strong>120</strong><span>Playlists</span></div>
+                    <div class="divider"></div>
+                    <div class="stat-item"><strong>8.5k</strong><span>Followers</span></div>
+                </div>
+                <div class="profile-actions">
+                    <button class="social-pill fb" onclick="document.location='https://t.me/JuanMOnle'"><i class="fab fa-telegram"></i> Facebook</button>
+                    <button class="social-pill ig" onclick="document.location='https://www.instagram.com/akosijuanmala/'"><i class="fab fa-instagram"></i> Instagram</button>
+                </div>
+            </div>
+            <div class="achievements-wrapper">
+                <h3>Badges & Trophies</h3>
+                <div id="achievements-container" class="achievements-grid centered-grid"></div>
+            </div>
+            <div class="activity-header">
+                <h3>Activity Log</h3>
+                <div class="view-toggles">
+                    <button onclick="setActivityView('tiles')" id="btn-view-tiles" class="toggle-btn active"><i class="fas fa-list"></i></button>
+                    <button onclick="setActivityView('icons')" id="btn-view-icons" class="toggle-btn"><i class="fas fa-th-large"></i></button>
+                </div>
+            </div>
+            <div id="profile-updates-container" class="updates-list tiles-view"></div>
         </div>
-    </div>
-<!--
-    <h3 class="section-title" style="text-align: center;">My Achievements</h3>
-    <div id="achievements-container" class="achievements-grid centered-grid">
-        </div>
-
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 15px;">
-        <h3 class="section-title" style="margin: 0;">Activity Log</h3>
-        
-        <div class="view-toggles">
-            <button onclick="setActivityView('tiles')" id="btn-view-tiles" class="toggle-btn active" title="Tile View">
-                <i class="fas fa-bars"></i>
-            </button>
-            <button onclick="setActivityView('icons')" id="btn-view-icons" class="toggle-btn" title="Icons Only">
-                <i class="fas fa-th"></i>
-            </button>
-        </div>
-    </div>
-
-    <div id="profile-updates-container" class="updates-list tiles-view">
-        </div> -->
-</div>
 
         <div id="playlist" class="section">
-            
             <div id="genre-view">
-                <h1>My Library</h1>
-                <p>Select a folder to view songs.</p>
-                <div id="folders-container" class="folders-grid">
-                    </div>
+                <h1>Library</h1>
+                <p style="color:var(--text-muted); margin-bottom:20px;">Select a category to browse tracks.</p>
+                <div id="folders-container" class="folders-grid"></div>
             </div>
-
             <div id="songs-view" style="display: none;">
-                <div class="songs-header">
-                    <button onclick="backToFolders()" class="btn-back"><i class="fas fa-arrow-left"></i> Back</button>
-                    <h1 id="selected-genre-title">Genre Name</h1>
+                <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                    <button onclick="backToFolders()" class="btn-back"><i class="fas fa-arrow-left"></i></button>
+                    <h1 id="selected-genre-title" style="margin:0;">Songs</h1>
                 </div>
-                <div id="playlist-container">
-                    </div>
+                <div id="playlist-container"></div>
             </div>
         </div>
 
-        
-
         <div id="suggest" class="section">
-    <h1>Suggest a Song</h1>
-    <p>Found a track we missed? Send it directly to my inbox!</p>
-    <br>
-
-    <form id="suggest-form" action="https://formspree.io/f/xzznjgpk" method="POST">
-        <input type="text" name="song_title" placeholder="Song Title" required>
-        <input type="text" name="artist" placeholder="Artist Name" required>
-        <input type="url" name="link" placeholder="Link (Spotify/YouTube) - Optional">
-        <textarea name="message" rows="3" placeholder="Any message? (Optional)" 
-                  style="width: 100%; padding: 12px; margin-bottom: 15px; background: var(--panel-bg); border: 1px solid #333; color: white; border-radius: 5px;"></textarea>
-        
-        <button class="btn-submit" type="submit">Submit Suggestion</button>
-    </form>
-
-    <div id="form-status" style="display: none; text-align: center; margin-top: 50px;">
-        <i class="fas fa-check-circle" style="font-size: 80px; color: var(--primary-color); margin-bottom: 20px;"></i>
-        <h2>Thank You!</h2>
-        <p style="color: #b3b3b3;">Your suggestion has been sent successfully.</p>
-        <button onclick="resetForm()" class="btn-submit" style="margin-top: 20px; background: #333;">Send Another</button>
-    </div>
-</div>
+            <h1>Suggest</h1>
+            <p style="color:var(--text-muted); margin-bottom:20px;">Submit your tracks directly to the stream.</p>
+            <form id="suggest-form" action="https://formspree.io/f/xzznjgpk" netlify method="POST">
+                <input type="text" name="title" placeholder="Song Title" required>
+                <input type="text" name="artist" placeholder="Artist" required>
+                <input type="url" name="link" placeholder="Link (Spotify/YouTube) - Optional">
+                <textarea name="message" rows="3" placeholder="Any message? (Optional)" 
+                style="width: 100%; padding: 12px; margin-bottom: 15px; background: var(--panel-bg); border: 1px solid #333; color: white; border-radius: 5px;"></textarea>
+                <button class="btn-submit">Submit</button>
+            </form>
+            <div id="form-status" style="display: none; text-align: center; margin-top: 50px;">
+                <h2>Sent!</h2>
+                <button onclick="resetForm()" class="btn-submit" style="margin-top:20px;">Send Another</button>
+            </div>
+        </div>
     </main>
 
     <div id="queue-popup" class="queue-popup">
@@ -130,43 +119,50 @@
             <h3>Up Next</h3>
             <button onclick="clearQueue()" class="btn-clear-sm">Clear</button>
         </div>
-        <div id="queue-list-content">
-            </div>
+        <div id="queue-list-content"></div>
     </div>
 
     <div class="music-player">
-        <div class="track-info">
-            <div class="track-art"><i class="fas fa-music"></i></div>
+        <div class="player-left">
+            <div class="track-art">
+                <img src="/images/Object.png" class="vinyl-img" id="vinyl-spin">
+            </div>
             <div class="track-details">
-                <h4 id="current-title">Select a Song</h4>
+                <h4 id="current-title">Select Song</h4>
                 <p id="current-artist">...</p>
             </div>
+            <i class="far fa-heart reaction-btn" id="player-like-btn" onclick="toggleLikeCurrent()" title="Like"></i>
         </div>
 
-        <div class="player-controls">
-            <div class="buttons">
-                <i class="fas fa-random" title="Shuffle"></i>
+        <div class="player-center">
+            <div class="control-buttons">
+                <i class="fas fa-random" id="shuffle-btn" onclick="toggleShuffle()" title="Shuffle"></i>
                 <i class="fas fa-step-backward" id="prev-btn"></i>
-                <i class="fas fa-play-circle play-pause" id="play-btn"></i>
+                <div class="play-btn-wrapper" id="play-btn">
+                    <i class="fas fa-play"></i>
+                </div>
                 <i class="fas fa-step-forward" id="next-btn"></i>
-                <i class="fas fa-redo" title="Loop"></i>
+                <i class="fas fa-redo" id="repeat-btn" onclick="toggleRepeat()" title="Repeat"></i>
             </div>
-            <div class="progress-container" id="progress-container">
-                <div class="progress" id="progress"></div>
-            </div>
-            <div class="time-stamps">
+            <div class="progress-area">
                 <span id="current-time">0:00</span>
+                <div class="progress-bar-bg" id="progress-container">
+                    <div class="progress-fill" id="progress"></div>
+                </div>
                 <span id="duration">0:00</span>
             </div>
         </div>
 
-        <div class="volume-controls">
-            <i class="fas fa-list" id="queue-btn" onclick="toggleQueuePopup()" title="Queue"></i>
-            <i class="fas fa-volume-up"></i>
-            <input type="range" min="0" max="100" value="100" class="volume-slider" onchange="setVolume(this.value)">
+        <div class="player-right">
+            <i class="fas fa-list-ul" id="queue-btn" onclick="toggleQueuePopup()" title="Queue"></i>
+            <div class="vol-wrapper">
+                <i class="fas fa-volume-up"></i>
+                <input type="range" min="0" max="100" value="100" class="vol-slider" onchange="setVolume(this.value)">
+            </div>
         </div>
-        
-        <audio id="audio-source"></audio>
+
+        <audio id="audio-deck-a"></audio>
+        <audio id="audio-deck-b"></audio>
     </div>
 
     <script src="script.js"></script>
