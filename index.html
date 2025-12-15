@@ -16,10 +16,10 @@
             <i class="fas fa-wave-square"></i> OneStream
         </div>
         <ul class="nav-links">
-            <li class="active" onclick="showSection('home', this)"><i class="fas fa-home"></i> Home</li>
-            <li onclick="showSection('profile', this)"><i class="fas fa-user"></i> Profile</li>
-            <li onclick="showSection('playlist', this)"><i class="fas fa-folder-open"></i> Library</li>
-            <li onclick="showSection('suggest', this)"><i class="fas fa-lightbulb"></i> Suggest</li>
+            <li class="active" onclick="showSection('home', this)"><i class="fas fa-home"></i><span>Home</span></li>
+            <li onclick="showSection('profile', this)"><i class="fas fa-user"></i><span>Profile</span></li>
+            <li onclick="showSection('playlist', this)"><i class="fas fa-folder-open"></i><span>Library</span></li>
+            <li onclick="showSection('suggest', this)"><i class="fas fa-lightbulb"></i><span>Suggest</span></li>
         </ul>
     </nav>
 
@@ -42,13 +42,12 @@
                     </div>
                 </div>
             </div>
-            
             <div class="section-header">
                 <h3>Latest Drops</h3>
                 <span class="see-all" onclick="showSection('playlist', this)">View All</span>
             </div>
             <div id="home-updates-container" class="updates-grid"></div>
-        </div> 
+        </div>
 
         <div id="profile" class="section">
             <div class="profile-dashboard">
@@ -68,7 +67,6 @@
                     <button class="social-pill ig" onclick="document.location='https://www.instagram.com/akosijuanmala/'"><i class="fab fa-instagram"></i> Instagram</button>
                 </div>
             </div>
-            
             <div class="achievements-wrapper">
                 <h3>Badges & Trophies</h3>
                 <div id="achievements-container" class="achievements-grid centered-grid"></div>
@@ -170,4 +168,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
