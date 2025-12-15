@@ -153,9 +153,7 @@ input, textarea { background: rgba(255,255,255,0.05); border: 1px solid rgba(255
 .queue-popup.show { display: block; animation: fadeUp 0.3s; }
 .queue-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #333; font-size: 0.9rem; color: #ddd; }
 .btn-clear-sm { background: #333; color: white; border: none; padding: 3px 10px; border-radius: 5px; font-size: 0.7rem; cursor: pointer; }
-
 .btn-back { background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-
 
 /* =========================================
    MOBILE RESPONSIVENESS (PHONES)
