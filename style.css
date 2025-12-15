@@ -153,4 +153,126 @@ input, textarea { background: rgba(255,255,255,0.05); border: 1px solid rgba(255
 .queue-popup.show { display: block; animation: fadeUp 0.3s; }
 .queue-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #333; font-size: 0.9rem; color: #ddd; }
 .btn-clear-sm { background: #333; color: white; border: none; padding: 3px 10px; border-radius: 5px; font-size: 0.7rem; cursor: pointer; }
+
 .btn-back { background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+
+
+/* =========================================
+   MOBILE RESPONSIVENESS (PHONES)
+   ========================================= */
+@media (max-width: 768px) {
+
+    /* 1. RESET SIDEBAR TO BOTTOM BAR */
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 65px; /* Slightly shorter for a cleaner look */
+        z-index: 1000;
+        
+        background: rgba(0, 0, 0, 0.95); 
+        backdrop-filter: blur(15px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-right: none;
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Hide Desktop-only elements */
+    .sidebar .logo, 
+    .sidebar .sidebar-footer {
+        display: none !important;
+    }
+
+    /* 2. NAVIGATION CONTAINER */
+    .nav-links {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly; /* Spread icons evenly */
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* 3. NAVIGATION ITEMS */
+    .nav-links li {
+        list-style: none;
+        flex: 1; 
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center; /* Perfectly centers the icon */
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-radius: 0;
+        margin: 0;
+        background: transparent;
+    }
+
+    /* 4. ICONS (Bigger & Centered) */
+    .nav-links li i {
+        font-size: 1.6rem; /* Bigger for easy tapping */
+        color: #888; 
+        transition: 0.3s;
+        margin: 0; /* Remove margin used for text spacing */
+        padding: 0;
+    }
+
+    /* 5. HIDE TEXT LABELS */
+    .nav-links li span {
+        display: none !important;
+    }
+
+    /* 6. ACTIVE STATE */
+    .nav-links li.active {
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .nav-links li.active i {
+        color: var(--primary); 
+        transform: translateY(-2px); /* Slight lift effect */
+        filter: drop-shadow(0 0 5px rgba(255, 0, 127, 0.6));
+    }
+
+    /* 7. PREVENT HOVER STICKINESS */
+    .nav-links li:hover {
+        background: transparent;
+        color: inherit;
+    }
+
+    /* --- LAYOUT ADJUSTMENTS --- */
+    
+    .main-content {
+        padding: 15px;
+        padding-bottom: 160px; /* Push content up above player */
+    }
+    
+    /* Fix Hero Section Text Size */
+    .polished-hero h1 { font-size: 2rem; }
+    
+    /* Reposition Player */
+    .music-player {
+        bottom: 75px; /* Sits exactly above the nav bar */
+        left: 10px;
+        width: calc(100% - 20px);
+        padding: 0 15px;
+        z-index: 1001;
+    }
+    
+    /* Hide extra controls on mobile player to prevent clutter */
+    .player-right, #prev-btn, #shuffle-btn, #repeat-btn, .progress-area {
+        display: none !important;
+    }
+    
+    .player-left { width: 70%; }
+    .player-center { width: 30%; align-items: flex-end; }
+    .control-buttons { margin: 0; gap: 15px; }
+}
